@@ -1,35 +1,29 @@
-using System;
+﻿using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic; 
-using System.Threading.Tasks;
-using API.Data;
 
 namespace API;
 
 [ApiController]
-[Route("api/[controller]")] 
-
-public class UsersController : ControllerBase 
+[Route("api/[controller]")] // /api/users
+public class UsersController(DataContext context) : ControllerBase
 {
-    private readonly DataContext _context;
-
-    public UsersController (DataContext context){
-        _context = context;
-    }
-
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers(){
-        var users =  await _context.Users.ToListAsync();
+    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+    {
+        var users = await context.Users.ToListAsync();
+
         return users;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<AppUser>> GetUser(int id){
-        var user = await _context.Users.FindAsync(id);
-        if(user == null) return NotFound();
+    [HttpGet("{id:int}")]  // /api/users/2
+    public async Task<ActionResult<AppUser>> GetUser(int id)
+    {
+        var user = await context.Users.FindAsync(id);
+
+        if (user == null) return NotFound();
+
         return user;
     }
 }
-
